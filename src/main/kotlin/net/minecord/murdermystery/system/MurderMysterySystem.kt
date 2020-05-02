@@ -6,14 +6,17 @@ import net.minecord.gamesys.game.Game
 import net.minecord.gamesys.game.player.GamePlayer
 import net.minecord.gamesys.game.sidebar.GameSidebar
 import net.minecord.gamesys.system.BaseSystem
+import net.minecord.murdermystery.MurderMystery
 import net.minecord.murdermystery.game.MurderMysteryGame
 import net.minecord.murdermystery.game.player.MurderMysteryPlayer
 import net.minecord.murdermystery.game.sidebar.MurderMysterySidebar
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
     override fun createGame(plugin: Gamesys, arena: Arena): Game {
-        return MurderMysteryGame(plugin, arena)
+        return MurderMysteryGame(plugin as MurderMystery, arena)
     }
 
     override fun createGamePlayer(plugin: Gamesys, player: Player): GamePlayer {
@@ -38,5 +41,22 @@ class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
 
     override fun isItemThrowingAllowed(): Boolean {
         return false
+    }
+
+    override fun getArenaBlockMapping(): HashMap<String, Material> {
+        val map = hashMapOf<String, Material>()
+
+        map["spawns"] = Material.WHITE_GLAZED_TERRACOTTA
+        map["golds"] = Material.YELLOW_GLAZED_TERRACOTTA
+
+        return map
+    }
+
+    fun getGoldSpawnInterval(): Int {
+        return 50
+    }
+
+    fun getGoldMineral(): ItemStack {
+        return ItemStack(Material.GOLDEN_APPLE)
     }
 }

@@ -1,6 +1,8 @@
 package net.minecord.murdermystery
 
 import net.minecord.gamesys.Gamesys
+import net.minecord.gamesys.system.BaseSystem
+import net.minecord.gamesys.system.System
 import net.minecord.murdermystery.game.player.MurderMysteryPlayerListener
 import net.minecord.murdermystery.system.MurderMysterySystem
 import org.bukkit.Bukkit
@@ -37,8 +39,10 @@ import org.bukkit.plugin.java.annotation.plugin.author.Author
         SoftDependency("ProtocolSupport")
 )
 class MurderMystery : Gamesys() {
+    override val system: MurderMysterySystem by lazy { MurderMysterySystem(this) }
+
     override fun onEnable() {
-        enable(MurderMysterySystem(this))
+        super.onEnable()
 
         Bukkit.getPluginManager().registerEvents(MurderMysteryPlayerListener(this), this)
 
@@ -48,6 +52,7 @@ class MurderMystery : Gamesys() {
 
     override fun onDisable() {
         super.onDisable()
+
         logger.logInfo("Plugin was successfully disabled!")
     }
 }
