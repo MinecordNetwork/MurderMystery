@@ -6,15 +6,20 @@ import net.minecord.gamesys.game.Game
 import net.minecord.gamesys.game.player.GamePlayer
 import net.minecord.gamesys.game.sidebar.GameSidebar
 import net.minecord.gamesys.system.BaseSystem
+import net.minecord.gamesys.utils.ItemBuilder
+import net.minecord.gamesys.utils.getMsgString
 import net.minecord.murdermystery.MurderMystery
 import net.minecord.murdermystery.game.MurderMysteryGame
 import net.minecord.murdermystery.game.player.MurderMysteryPlayer
 import net.minecord.murdermystery.game.sidebar.MurderMysterySidebar
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
+    val goldMineral = ItemBuilder(Material.PLAYER_HEAD).data(3)
+            .skullTexture(plugin.getMsgString("game.items.gold-mineral.skull-texture"))
+            .name(plugin.getMsgString("game.items.gold-mineral.name")).make()
+
     override fun createGame(plugin: Gamesys, arena: Arena): Game {
         return MurderMysteryGame(plugin as MurderMystery, arena)
     }
@@ -54,9 +59,5 @@ class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
 
     fun getGoldSpawnInterval(): Int {
         return 50
-    }
-
-    fun getGoldMineral(): ItemStack {
-        return ItemStack(Material.GOLDEN_APPLE)
     }
 }

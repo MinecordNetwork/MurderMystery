@@ -3,8 +3,12 @@ package net.minecord.murdermystery.game
 import net.minecord.gamesys.arena.Arena
 import net.minecord.gamesys.game.Game
 import net.minecord.gamesys.game.GameStatus
+import net.minecord.gamesys.game.player.GamePlayer
 import net.minecord.gamesys.utils.runTask
+import net.minecord.murderMurderMystery.game.bow.MurderMysteryBow
 import net.minecord.murdermystery.MurderMystery
+import net.minecord.murdermystery.game.player.MurderMysteryPlayer
+import net.minecord.murdermystery.game.player.MurderMysteryPlayerRole
 import org.bukkit.Location
 import org.bukkit.entity.Item
 import org.bukkit.inventory.ItemStack
@@ -14,9 +18,14 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
 class MurderMysteryGame(override val plugin: MurderMystery, override val arena: Arena) : Game(plugin, arena) {
+    private val bow: MurderMysteryBow? = null
     private val spawnedGold = ConcurrentHashMap<Location, Item>()
     private val pickedGoldTime = HashMap<Location, Long>()
     private var goldMineralIterator = 0
+
+    fun getInnocents(): List<GamePlayer> {
+        return players.filter { (it as MurderMysteryPlayer).role == MurderMysteryPlayerRole.INNOCENT }
+    }
 
     private fun getGoldLocations(): MutableList<Location> {
         return locations["golds"]!!
@@ -55,7 +64,7 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
                     plugin.runTask {
                         spawnLocations.forEach(Consumer { location: Location ->
                             goldMineralIterator++
-                            val newMineral: ItemStack = plugin.system.getGoldMineral()
+                            val newMineral: ItemStack = plugin.system.goldMineral
                             val mineralMeta = newMineral.itemMeta
                             val lore: MutableList<String> = ArrayList()
                             lore.add("Iterator - $goldMineralIterator")
