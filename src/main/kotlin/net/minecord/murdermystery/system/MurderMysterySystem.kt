@@ -7,6 +7,7 @@ import net.minecord.gamesys.game.player.GamePlayer
 import net.minecord.gamesys.game.sidebar.GameSidebar
 import net.minecord.gamesys.system.BaseSystem
 import net.minecord.gamesys.utils.ItemBuilder
+import net.minecord.gamesys.utils.getCfgInt
 import net.minecord.gamesys.utils.getMsgString
 import net.minecord.murdermystery.MurderMystery
 import net.minecord.murdermystery.game.MurderMysteryGame
@@ -33,7 +34,7 @@ class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
     }
 
     override fun getChatPrefix(): String {
-        return "&c&lMurder &f&l●&7"
+        return plugin.getMsgString("prefix")
     }
 
     override fun dropItemsAfterDeath(): Boolean {
@@ -58,6 +59,6 @@ class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
     }
 
     fun getGoldSpawnInterval(): Int {
-        return 50
+        return plugin.getCfgInt("game.goldSpawnInterval")
     }
 }

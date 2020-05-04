@@ -111,7 +111,7 @@ class MurderMysteryBow(private val plugin: MurderMystery, private val game: Murd
         Bukkit.getPluginManager().callEvent(BowPickupEvent(player, true))
     }
 
-    private fun giveBow() {
+    fun giveBow() {
         keeper?.apply {
             player.inventory.setItem(0, bow)
             player.inventory.setItem(1, ItemStack(Material.ARROW))
