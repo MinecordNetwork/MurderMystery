@@ -5,7 +5,7 @@ import net.minecord.gamesys.arena.Arena
 import net.minecord.gamesys.game.Game
 import net.minecord.gamesys.game.player.GamePlayer
 import net.minecord.gamesys.game.sidebar.GameSidebar
-import net.minecord.gamesys.system.BaseSystem
+import net.minecord.gamesys.system.DefaultSystem
 import net.minecord.gamesys.utils.ItemBuilder
 import net.minecord.gamesys.utils.getCfgInt
 import net.minecord.gamesys.utils.getMsgString
@@ -16,7 +16,7 @@ import net.minecord.murdermystery.game.sidebar.MurderMysterySidebar
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
+class MurderMysterySystem(plugin: Gamesys) : DefaultSystem(plugin) {
     val goldMineral = ItemBuilder(Material.PLAYER_HEAD).data(3)
             .skullTexture(plugin.getMsgString("game.items.gold-mineral.skull-texture"))
             .name(plugin.getMsgString("game.items.gold-mineral.name")).make()
@@ -35,18 +35,6 @@ class MurderMysterySystem(plugin: Gamesys) : BaseSystem(plugin) {
 
     override fun getChatPrefix(): String {
         return plugin.getMsgString("prefix")
-    }
-
-    override fun dropItemsAfterDeath(): Boolean {
-        return false
-    }
-
-    override fun isHungerBarDisabled(): Boolean {
-        return true
-    }
-
-    override fun isItemThrowingAllowed(): Boolean {
-        return false
     }
 
     override fun getArenaBlockMapping(): HashMap<String, Material> {
