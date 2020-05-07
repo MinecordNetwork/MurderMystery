@@ -279,7 +279,7 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
                     if (!spawnedGold.containsKey(location)) {
                         if (pickedGoldTime.containsKey(location)) {
                             val lastSpawn: Long = pickedGoldTime[location]!!
-                            if (lastSpawn + plugin.system.getGoldSpawnInterval() > currentTime) continue
+                            if (lastSpawn + plugin.getCfgInt("game.goldSpawnInterval") > currentTime) continue
                         }
                         spawnLocations.add(location)
                     }

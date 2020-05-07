@@ -45,8 +45,4 @@ class MurderMysterySystem(plugin: Gamesys) : DefaultSystem(plugin) {
 
         return map
     }
-
-    fun getGoldSpawnInterval(): Int {
-        return plugin.getCfgInt("game.goldSpawnInterval")
-    }
 }
