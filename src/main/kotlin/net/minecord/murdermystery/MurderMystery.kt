@@ -44,6 +44,8 @@ class MurderMystery : Gamesys() {
 
         Bukkit.getPluginManager().registerEvents(MurderMysteryPlayerListener(this), this)
 
+        //getCommand("testgame")!!.setExecutor(TestCommand(this))
+
         logger.logInfo("Plugin successfully enabled!")
         logger.logInfo("This plugin was created by &eMinecord Network &a[https://minecord.net]")
     }

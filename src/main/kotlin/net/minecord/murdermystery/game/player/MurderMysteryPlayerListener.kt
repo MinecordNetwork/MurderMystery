@@ -2,7 +2,6 @@ package net.minecord.murdermystery.game.player
 
 import net.minecord.gamesys.game.GameStatus
 import net.minecord.gamesys.game.player.GamePlayerStatus
-import net.minecord.gamesys.utils.getCfgInt
 import net.minecord.gamesys.utils.runTaskAsynchronously
 import net.minecord.murdermystery.MurderMystery
 import net.minecord.murdermystery.event.GoldPickupEvent
@@ -10,7 +9,6 @@ import net.minecord.murdermystery.game.MurderMysteryGame
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -102,7 +100,7 @@ class MurderMysteryPlayerListener(private val plugin: MurderMystery): Listener {
             if (it.status == GameStatus.RUNNING && attacker.role == MurderMysteryPlayerRole.MURDERER) {
                 val handItem = attacker.player.inventory.itemInMainHand
                 if (handItem.type == Material.IRON_SWORD) {
-                    it.onPlayerDeath(victim, e.cause)
+                    it.onPlayerDeath(victim, e.cause, attacker)
                     return
                 }
             }
@@ -156,30 +154,25 @@ class MurderMysteryPlayerListener(private val plugin: MurderMystery): Listener {
         val projectile = e.entity as? Arrow ?: return
         if (projectile.shooter !is Player) return
 
-        val player = plugin.gamePlayerManager.get(projectile.shooter as Player) as MurderMysteryPlayer
-        (player.game as MurderMysteryGame?)?.let {
+        val killer = plugin.gamePlayerManager.get(projectile.shooter as Player) as MurderMysteryPlayer
+        (killer.game as MurderMysteryGame?)?.let {
             if (it.status != GameStatus.RUNNING) return
-            if (player.player.inventory.itemInMainHand.type != Material.BOW) return
+            if (killer.player.inventory.itemInMainHand.type != Material.BOW) return
 
-            if (player == it.bow.keeper) {
-                player.player.inventory.setItem(1, ItemStack(Material.AIR))
+            if (killer == it.bow.keeper) {
+                killer.player.inventory.setItem(1, ItemStack(Material.AIR))
                 it.bow.reloadBow()
             }
 
             if (e.hitEntity != null && e.hitEntity is Player) {
                 val victim = plugin.gamePlayerManager.get(e.hitEntity as Player) as MurderMysteryPlayer
-                if (victim.role != MurderMysteryPlayerRole.MURDERER && victim != player) {
-                    if (player.role != MurderMysteryPlayerRole.MURDERER) {
-                        it.onPlayerDeath(player, EntityDamageEvent.DamageCause.PROJECTILE)
-                        //val score: Int = plugin.getCfgInt("score.per-wrong-kill")
-                        //TODO: Add bad score to player with "game.score-causes.wrong-kill" message
-                    }
+                if (victim.role != MurderMysteryPlayerRole.MURDERER && killer.role != MurderMysteryPlayerRole.MURDERER) {
+                    it.onPlayerDeath(killer, EntityDamageEvent.DamageCause.PROJECTILE)
+                    //val score: Int = plugin.getCfgInt("score.per-wrong-kill")
+                    //TODO: Add bad score to player with "game.score-causes.wrong-kill" message
                 }
-                victim.onAttack(player, EntityDamageEvent.DamageCause.PROJECTILE)
-                if (victim == player)
-                    it.onPlayerDeath(victim, EntityDamageEvent.DamageCause.SUICIDE)
-                else
-                    it.onPlayerDeath(victim, EntityDamageEvent.DamageCause.PROJECTILE)
+
+                it.onPlayerDeath(victim, EntityDamageEvent.DamageCause.PROJECTILE, killer)
             }
         }
 

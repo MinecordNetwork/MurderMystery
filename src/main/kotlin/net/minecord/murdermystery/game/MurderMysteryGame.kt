@@ -9,6 +9,8 @@ import net.minecord.gamesys.game.GameStatus
 import net.minecord.gamesys.game.player.GamePlayer
 import net.minecord.gamesys.game.player.GamePlayerStatus
 import net.minecord.gamesys.utils.*
+import net.minecord.gamesys.utils.chat.colored
+import net.minecord.gamesys.utils.chat.getCenteredChat
 import net.minecord.murderMurderMystery.game.bow.MurderMysteryBow
 import net.minecord.murdermystery.MurderMystery
 import net.minecord.murdermystery.game.player.MurderMysteryPlayer
@@ -50,13 +52,19 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
 
         player as MurderMysteryPlayer
 
-        player.role = MurderMysteryPlayerRole.INNOCENT
-
         if (status == GameStatus.RUNNING) {
             if (bow.keeper == player) {
                 bow.dropBow()
             }
         }
+
+        if (player.role == MurderMysteryPlayerRole.MURDERER) {
+            if (status == GameStatus.RUNNING) {
+                onEndCountdownStart()
+            }
+        }
+
+        player.role = MurderMysteryPlayerRole.INNOCENT
     }
 
     override fun onGameStart() {
@@ -129,7 +137,7 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
 
         plugin.runTaskLaterAsynchronously({
             players.forEach {it as MurderMysteryPlayer
-                it.player.sendTitle(plugin.getMsgString("game.start.you-are-${it.role.toString().toLowerCase()}-title"), "", 0, 60, 20)
+                it.player.sendTitle("", plugin.getMsgString("game.start.you-are-${it.role.toString().toLowerCase()}-title"), 0, 60, 20)
             }
         }, 60)
 
@@ -151,19 +159,19 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
         super.onPlayerDeath(player, cause, killer)
 
         player as MurderMysteryPlayer
-        val murderKiller = killer as MurderMysteryPlayer?
+        killer as MurderMysteryPlayer?
 
         //TODO: Increase death stats
         //val deathScore: Int = plugin.getCfgInt("score.per-death")
         //TODO: Add death score
 
-        if (murderKiller != null) {
-            if (murderKiller.role == MurderMysteryPlayerRole.MURDERER || player.role == MurderMysteryPlayerRole.MURDERER) {
+        if (killer != null) {
+            if (killer.role == MurderMysteryPlayerRole.MURDERER || player.role == MurderMysteryPlayerRole.MURDERER) {
                 //val score: Int = plugin.getCfgInt("score.per-kill")
                 //TODO: Add score to killer
             }
             if (player.role == MurderMysteryPlayerRole.MURDERER) {
-                hero = murderKiller
+                hero = killer
             }
             //TODO: Increase kill stats
         }
@@ -210,17 +218,15 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
 
         val scorePerWin: Int = plugin.getCfgInt("score.per-win")
         if (winner == null) {
-            val heroName = hero?.player?.name ?: ""
-            sendMessage(plugin.getMsgString("game.win.innocents-message").replace("%arena%", arena.name))
-            bar.setTitle(plugin.getMsgString("game.win.innocents-title").replace("%arena%", arena.name))
+            val heroName = hero?.player?.displayName ?: ""
+            Bukkit.broadcastMessage(plugin.system.getChatPrefix() + " " + plugin.getMsgString("game.win.innocents-message").replace("%arena%", arena.name))
             plugin.getMsgStringList("summary-innocents").forEach {
-                sendMessage(it.replace("%murderer%", murderer.player.name).replace("%murdererScore%", "").replace("%detective%", detective.player.name).replace("%detectiveScore%", "").replace("%hero%", heroName).replace("%heroScore%", ""))
+                sendMessage(it.replace("%murdererDisplayName%", murderer.player.displayName).replace("%murdererScore%", "").replace("%detectiveDisplayName%", detective.player.displayName).replace("%detectiveScore%", "").replace("%heroDisplayName%", heroName).replace("%heroScore%", "").colored().getCenteredChat())
             }
         } else {
             Bukkit.broadcastMessage(plugin.system.getChatPrefix() + " " + plugin.getMsgString("game.win.murderer-message").replace("%player%", murderer.player.name).replace("%arena%", arena.name))
-            bar.setTitle(plugin.getMsgString("game.win.murderer-title").replace("%player%", murderer.player.name).replace("%arena%", arena.name))
             plugin.getMsgStringList("summary-murderer").forEach {
-                sendMessage(it.replace("%murderer%", murderer.player.name).replace("%murdererScore%", "").replace("%detective%", detective.player.name).replace("%detectiveScore%", ""))
+                sendMessage(it.replace("%murdererDisplayName%", murderer.player.displayName).replace("%murdererScore%", "").replace("%detectiveDisplayName%", detective.player.displayName).replace("%detectiveScore%", "").colored().getCenteredChat())
             }
         }
         //TODO: Add score with message "game.score-causes.win" and increase win stats
@@ -248,10 +254,6 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
                 countdown--
             }
         }.runTaskTimerAsynchronously(plugin, 0, 20)
-    }
-
-    override fun getMinimumPlayers(): Int {
-        return 3
     }
 
     fun onGoldPickup(i: Item) {
@@ -378,5 +380,13 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
 
     private fun getGoldLocations(): MutableList<Location> {
         return locations["golds"]!!
+    }
+
+    override fun getMinimumPlayers(): Int {
+        return 4
+    }
+
+    override fun getMinimumPlayersToStartCountdown(): Int {
+        return 5
     }
 }
