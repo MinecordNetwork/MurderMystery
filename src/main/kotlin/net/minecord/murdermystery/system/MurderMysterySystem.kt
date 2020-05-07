@@ -26,11 +26,11 @@ class MurderMysterySystem(plugin: Gamesys) : DefaultSystem(plugin) {
     }
 
     override fun createGamePlayer(plugin: Gamesys, player: Player): GamePlayer {
-        return MurderMysteryPlayer(plugin, player)
+        return MurderMysteryPlayer(plugin as MurderMystery, player)
     }
 
     override fun createGameSidebar(plugin: Gamesys, game: Game): GameSidebar {
-        return MurderMysterySidebar(plugin, game)
+        return MurderMysterySidebar(plugin as MurderMystery, game as MurderMysteryGame)
     }
 
     override fun getChatPrefix(): String {

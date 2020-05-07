@@ -1,8 +1,6 @@
 package net.minecord.murdermystery
 
 import net.minecord.gamesys.Gamesys
-import net.minecord.gamesys.system.BaseSystem
-import net.minecord.gamesys.system.System
 import net.minecord.murdermystery.game.player.MurderMysteryPlayerListener
 import net.minecord.murdermystery.system.MurderMysterySystem
 import org.bukkit.Bukkit
@@ -27,7 +25,7 @@ import org.bukkit.plugin.java.annotation.plugin.author.Author
 )
 @Website("https://minecord.net")
 @Author("Minecord Network")
-@ApiVersion(ApiVersion.Target.DEFAULT)
+@ApiVersion(ApiVersion.Target.v1_13)
 @DependsOn(
         Dependency("Multiverse-Core"),
         Dependency("HolographicDisplays"),

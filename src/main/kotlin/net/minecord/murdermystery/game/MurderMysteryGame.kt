@@ -1,9 +1,13 @@
 package net.minecord.murdermystery.game
 
+import com.sk89q.worldedit.EditSession
+import com.sk89q.worldedit.math.BlockVector3
+import com.sk89q.worldedit.world.block.BlockTypes
 import net.minecord.gamesys.arena.Arena
 import net.minecord.gamesys.game.Game
 import net.minecord.gamesys.game.GameStatus
 import net.minecord.gamesys.game.player.GamePlayer
+import net.minecord.gamesys.game.player.GamePlayerStatus
 import net.minecord.gamesys.utils.*
 import net.minecord.murderMurderMystery.game.bow.MurderMysteryBow
 import net.minecord.murdermystery.MurderMystery
@@ -13,6 +17,7 @@ import org.bukkit.*
 import org.bukkit.boss.BarColor
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -21,10 +26,10 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
 class MurderMysteryGame(override val plugin: MurderMystery, override val arena: Arena) : Game(plugin, arena) {
-    private lateinit var murderer: MurderMysteryPlayer
-    private lateinit var detective: MurderMysteryPlayer
+    lateinit var murderer: MurderMysteryPlayer
+    lateinit var detective: MurderMysteryPlayer
     private var hero: MurderMysteryPlayer? = null
-    private lateinit var bow: MurderMysteryBow
+    lateinit var bow: MurderMysteryBow
     private val spawnedGold = ConcurrentHashMap<Location, Item>()
     private val pickedGoldTime = HashMap<Location, Long>()
     private var goldMineralIterator = 0
@@ -32,11 +37,33 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
     private var goldSpawningTask: BukkitTask? = null
     private var gameCountdownTask: BukkitTask? = null
 
+    override fun onArenaLoaded(editSession: EditSession, origin: Location, lobbyLocation: Location) {
+        super.onArenaLoaded(editSession, origin, lobbyLocation)
+
+        getGoldLocations().forEach {
+            editSession.setBlock(BlockVector3.at(it.blockX, it.blockY, it.blockZ), BlockTypes.AIR?.defaultState)
+        }
+    }
+
+    override fun onPlayerLeft(player: GamePlayer) {
+        super.onPlayerLeft(player)
+
+        player as MurderMysteryPlayer
+
+        player.role = MurderMysteryPlayerRole.INNOCENT
+
+        if (status == GameStatus.RUNNING) {
+            if (bow.keeper == player) {
+                bow.dropBow()
+            }
+        }
+    }
+
     override fun onGameStart() {
         super.onGameStart()
 
         players.forEach {
-            it.player.sendTitle("&e&lGame Started".colored(), "&f&lBe first who kills &e&l20 &f&lplayers".colored(), 0, 80, 20)
+            it.player.sendTitle("&e&lGame Started".colored(), "&f&lSolve the murder mystery!".colored(), 0, 80, 20)
         }
 
         startGameCountdown()
@@ -46,7 +73,7 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
         murderer.role = MurderMysteryPlayerRole.MURDERER
         //TODO: Increase murderer stats
 
-        detective = players.random() as MurderMysteryPlayer
+        detective = getInnocents().random() as MurderMysteryPlayer
         detective.role = MurderMysteryPlayerRole.DETECTIVE
         bow = MurderMysteryBow(plugin, this, detective)
 
@@ -105,6 +132,8 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
                 it.player.sendTitle(plugin.getMsgString("game.start.you-are-${it.role.toString().toLowerCase()}-title"), "", 0, 60, 20)
             }
         }, 60)
+
+        sidebar.update()
     }
 
     override fun onGameEnd(winner: GamePlayer?) {
@@ -118,8 +147,66 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
         bow.destroy()
     }
 
+    override fun onPlayerDeath(player: GamePlayer, cause: EntityDamageEvent.DamageCause?, killer: GamePlayer?) {
+        super.onPlayerDeath(player, cause, killer)
+
+        player as MurderMysteryPlayer
+        val murderKiller = killer as MurderMysteryPlayer?
+
+        //TODO: Increase death stats
+        //val deathScore: Int = plugin.getCfgInt("score.per-death")
+        //TODO: Add death score
+
+        if (murderKiller != null) {
+            if (murderKiller.role == MurderMysteryPlayerRole.MURDERER || player.role == MurderMysteryPlayerRole.MURDERER) {
+                //val score: Int = plugin.getCfgInt("score.per-kill")
+                //TODO: Add score to killer
+            }
+            if (player.role == MurderMysteryPlayerRole.MURDERER) {
+                hero = murderKiller
+            }
+            //TODO: Increase kill stats
+        }
+
+        instantFirework(FireworkEffect.builder().withColor(Color.RED).build(), player.player.location)
+
+        if (bow.keeper == player) bow.dropBow()
+
+        if (status == GameStatus.RUNNING) {
+            if (getInnocents().isEmpty()) {
+                onEndCountdownStart(murderer)
+            } else if (!murderer.isAlive()) {
+                onEndCountdownStart()
+            }
+        }
+    }
+
+    override fun onDeathMessageSent(player: GamePlayer, cause: EntityDamageEvent.DamageCause?, killer: GamePlayer?) {
+        if (killer != null) {
+            sendMessage(plugin.getMsgString("game.kill").replace("%victim%", player.player.name))
+        } else {
+            sendMessage(plugin.getMsgString("game.death").replace("%victim%", player.player.name))
+        }
+    }
+
+    override fun onPlayerStartsToRespawn(player: GamePlayer, cause: EntityDamageEvent.DamageCause?, killer: GamePlayer?) {
+        player.player.sendTitle(plugin.getMsgString("game.death-screen.title"), plugin.getMsgString("game.death-screen.subtitle"), 0, 60, 10)
+        player.player.setItemOnCursor(null)
+        player.player.inventory.clear()
+        player.player.gameMode = GameMode.SPECTATOR
+        player.status = GamePlayerStatus.SPECTATING
+        plugin.runTaskAsynchronously {
+            player.player.sendMessage(plugin.system.getChatPrefix() + " " + plugin.getMsgString("game.spectator-join"))
+            player.player.sendMessage(plugin.system.getChatPrefix() + " " + plugin.getMsgString("game.spectator-chat-only"))
+            player.player.playSound(player.player.location, Sound.ENTITY_ENDER_DRAGON_GROWL, 10f, 1f)
+            sidebar.update()
+        }
+    }
+
     override fun onEndCountdownStart(winner: GamePlayer?) {
         super.onEndCountdownStart(winner)
+
+        gameCountdownTask?.cancel()
 
         val scorePerWin: Int = plugin.getCfgInt("score.per-win")
         if (winner == null) {
@@ -161,6 +248,10 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
                 countdown--
             }
         }.runTaskTimerAsynchronously(plugin, 0, 20)
+    }
+
+    override fun getMinimumPlayers(): Int {
+        return 3
     }
 
     fun onGoldPickup(i: Item) {
@@ -225,7 +316,7 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
             var countdown = gameLength
             override fun run() {
                 if (countdown <= 0) {
-                    onGameEnd()
+                    onEndCountdownStart()
                     cancel()
                     return
                 }
@@ -282,7 +373,7 @@ class MurderMysteryGame(override val plugin: MurderMystery, override val arena: 
     }
 
     fun getInnocents(): List<GamePlayer> {
-        return players.filter { (it as MurderMysteryPlayer).role in listOf(MurderMysteryPlayerRole.INNOCENT, MurderMysteryPlayerRole.DETECTIVE) }
+        return players.filter { (it as MurderMysteryPlayer).role in listOf(MurderMysteryPlayerRole.INNOCENT, MurderMysteryPlayerRole.DETECTIVE) && it.isAlive() }
     }
 
     private fun getGoldLocations(): MutableList<Location> {

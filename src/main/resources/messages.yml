@@ -1,0 +1,87 @@
+﻿prefix: '&c&lMurder &f● &7'
+chat:
+  game:
+    alive: '&a&lGame %score% %displayName% &f» &7%message%'
+    dead: '&c&lDead %score% %displayName% &f» &7%message%'
+  lobby: '&e&lLobby %score% %displayName% &f» &7%message%'
+game:
+  time-left: '&c&lTime Left: &f&l%time%'
+  waiting-for-more-players: '&f&lWaiting for more players'
+  is-starting-title: '&f&lGame is starting'
+  starts-in: '&e&lGame starts in: &f&l%seconds%'
+  started-title: '&a&lGame Started'
+  join: 'Player &e%player% &7joined the game &6(%current%/%max%)'
+  leave: 'Player &e%player% &7left the game &6(%current%/%max%)'
+  death: 'Player &e%player% &7died'
+  kill: 'Player &e%victim% &7was killed'
+  start:
+    you-are-murderer-title: '&f&lYou are &c&lMurderer'
+    you-are-detective-title: '&f&lYou are &b&lDetective'
+    you-are-innocent-title: '&f&lYou are &a&lInnocent'
+  sword:
+    receive-title: '&f&lMurderer receive their sword'
+    received-title: '&a&lMurderer has received their sword!'
+  locator:
+    receive-title: '&f&lMurderer receive their locator'
+    received-title: '&a&lMurderer has received their locator!'
+  win:
+    murderer-title: '&f&lMurderer &c&l%player% &f&lwon the game'
+    murderer-message: 'Murderer &c%player% &7won the arena &b%arena%'
+    innocents-title: '&a&lInnocents &f&lwon the game'
+    innocents-message: '&aInnocents &7won the arena &b%arena%'
+  spectator-join: "You are now Spectator, for leave type &c/leave"
+  spectator-chat-only: 'Your chat is now visible only for spectators'
+  death-screen: 
+    title: "&c&lYou died!"
+    subtitle: "&f&lYou are now Spectator, for leave type &c&l/leave"
+  no-free-arenas-title: "&c&lSorry, but there are no free arenas"
+  bow-was-dropped-title: '&f&lThe Bow has been dropped'
+  bow-was-taken-title: '&a&lThe Bow has been taken'
+  bow-reloading: '&e&lReloading Mystery Bow'
+  items:
+    gold-mineral:
+      name: '&e&lGolden Mineral'
+      skull-texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTQ1ZjQ3ZmViNGQ3NWNiMzMzOTE0YmZkYjk5OWE0ODljOWQwZTMyMGQ1NDhmMzEwNDE5YWQ3MzhkMWUyNGI5In19fQ=='
+    player-locator: '&aPlayer Locator'
+    bow-locator: '&aBow Locator'
+    detective-bow: '&bMystery Bow'
+    leave-game: '&c&lLeave the Game &7(Right Click)'
+  score-causes:
+    gold-pickup: 'Gold pickup'
+    player-kill: 'Player kill'
+    wrong-kill: 'Wrong kill'
+    30-sec-alive: 'Alive for 30 seconds'
+    win: 'Winning the game'
+scoreboard:
+  game:
+    title: '&7&lArena &f➲ &e&l%arena%'
+    model: '&f%key%: &b%value%'
+    separator: '&f'
+    string:
+      gameid: 'Game ID'
+      players: 'Players'
+      role: 'Role'
+      score: 'Your Score'
+      detective: 'Detective'
+      innocents-left: 'Innocents Left'
+      required-players: 'Players required'
+      last-line: '&bIP: &fmc.minecord.net'
+summary-murderer:
+  - '&7&l&m====&c&l&m====&6&l&m====&e&l&m====&a&l&m====&b&l&m====&a&l&m====&e&l&m====&6&l&m====&c&l&m====&7&l&m===='
+  - ' '
+  - '                    &f&lInnocents lost the game!'
+  - ' '
+  - '                      &cMurderer: &f%murderer%'
+  - '                     &bDetective: &f%detective%'
+  - ' '
+  - '&7&l&m====&c&l&m====&6&l&m====&e&l&m====&a&l&m====&b&l&m====&a&l&m====&e&l&m====&6&l&m====&c&l&m====&7&l&m===='
+summary-innocents:
+  - '&7&l&m====&c&l&m====&6&l&m====&e&l&m====&a&l&m====&b&l&m====&a&l&m====&e&l&m====&6&l&m====&c&l&m====&7&l&m===='
+  - ' '
+  - '                    &f&lInnocents won the game!'
+  - ' '
+  - '                      &cMurderer: &f%murderer%'
+  - '                     &bDetective: &f%detective%'
+  - '                       &aHero: &f%hero%'
+  - ' '
+  - '&7&l&m====&c&l&m====&6&l&m====&e&l&m====&a&l&m====&b&l&m====&a&l&m====&e&l&m====&6&l&m====&c&l&m====&7&l&m===='

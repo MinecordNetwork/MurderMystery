@@ -24,6 +24,9 @@ dependencies {
     implementation "org.spigotmc:spigot-api:$spigotVersion"
     implementation 'org.bukkit:spigot-server:1.15.2'
     implementation 'org.spigotmc:plugin-annotations:1.2.2-SNAPSHOT'
+    implementation 'com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT'
+    implementation 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
+    implementation 'com.boydti:fawe-core:1.15-654'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'net.minecord.gamesys:Gamesys:1.0-SNAPSHOT'
     kapt "$group:$pluginName:$version"

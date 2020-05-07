@@ -27,7 +27,7 @@ class MurderMysteryBow(private val plugin: MurderMystery, private val game: Murd
     private var bowReloading: BukkitTask? = null
     private var dropRotation: BukkitTask? = null
     private var pickupChecking: BukkitTask? = null
-    private var keeper: MurderMysteryPlayer? = null
+    var keeper: MurderMysteryPlayer? = null
 
     init {
         keeper = detective
