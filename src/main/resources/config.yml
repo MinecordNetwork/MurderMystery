@@ -1,4 +1,7 @@
 useAfterDeathHolograms: true
+portal:
+  world: world
+  location: 0 60 0
 score:
   per-kill: 8
   per-wrong-kill: -15
@@ -6,46 +9,21 @@ score:
   per-30-sec-alive: 5
   per-gold-pickup: 1
   per-win: 10
-mysql:
-  enabled: true
+stats:
+  enabled: false
   host: localhost
   port: 3306
   user: minecraft
   pass: password
   name: minecraft
-  linking:
-    table: mgapi_linking
-    columns:
-      id: id
-      uuid: uuid
-      username: username
-  stats:
-    enabled: true
-    table: mgapi_stats_murder
-  logs:
-    enabled: true
-    tables:
-      game: mgapi_game
-      data: mgapi_game_data
-      participants: mgapi_game_players
 game:
   hologram: true
   visibleForOtherPlayers: true
   otherPlayersVisible: true
   minimumPlayersForStart: 6
   startCounter: 60
-  goldSpawnInterval: 30
+  goldSpawnInterval: 25
   giveSwordToMurderer: 10
   givePlayerLocator: 210
   detectiveBowReload: 6
   gameLength: 300
-  portal:
-    world: world
-    location: 0 80 0 0 0
-    radius: 7
-lobby:
-  world: world
-  location: 0 80 0 0 0
-waitingLobby:
-  world: world
-  location: 0 80 0 0 0
