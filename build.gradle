@@ -6,7 +6,6 @@ plugins {
 group 'net.minecord'
 version '1.0-SNAPSHOT'
 
-def spigotVersion = '1.15-R0.1-SNAPSHOT'
 def pluginName = 'MurderMystery'
 
 sourceCompatibility = 1.8
@@ -14,6 +13,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = "https://papermc.io/repo/repository/maven-public/" }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://maven.enginehub.org/repo/' }
     flatDir { dirs 'libs' }
@@ -21,15 +21,14 @@ repositories {
 }
 
 dependencies {
-    implementation "org.spigotmc:spigot-api:$spigotVersion"
-    implementation 'org.bukkit:spigot-server:1.15.2'
+    implementation group: 'com.destroystokyo.paper', name: 'paper-api', version:'1.16.1-R0.1-SNAPSHOT'
+    implementation files('libs_runtime/paper-251.jar')
     implementation 'org.spigotmc:plugin-annotations:1.2.2-SNAPSHOT'
     implementation 'com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT'
     implementation 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
     implementation 'com.boydti:fawe-core:1.15-654'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'net.minecord.gamesys:Gamesys:1.0-SNAPSHOT'
-    kapt "$group:$pluginName:$version"
 }
 
 jar {

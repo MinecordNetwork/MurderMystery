@@ -13,7 +13,7 @@ import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.boss.BarColor
 import org.bukkit.boss.BarStyle
-import org.bukkit.craftbukkit.v1_15_R1.boss.CraftBossBar
+import org.bukkit.craftbukkit.v1_16_R3.boss.CraftBossBar
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
