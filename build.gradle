@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.boydti:fawe-core:1.15-654'
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     compile 'net.minecord.gamesys:Gamesys:1.0-SNAPSHOT'
+    kapt "$group:$pluginName:$version"
 }
 
 jar {
